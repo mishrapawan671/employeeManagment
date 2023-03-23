@@ -4,15 +4,16 @@ package com.emplyeemanagement.employeeManagment.Model;
 import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+import java.util.List;
+
 @EntityScan("model")
-@Entity
-@Table(name="employees")
+@Entity(name = "employee")
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "employee_id")
     private long id;
-
     @Column(name = "first_name")
     private String firstName;
     @Column(name="Last_name")
@@ -22,6 +23,30 @@ public class Employee {
 
     public Employee() {
     }
+
+    public List<Attendence> getAttendences() {
+        return attendences;
+    }
+
+    public void setAttendences(List<Attendence> attendences) {
+        this.attendences = attendences;
+    }
+
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    List<Attendence>attendences;
+
+
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", emailId='" + emailId + '\'' +
+                '}';
+    }
+
 
     public Employee(long id, String firstName, String lastName, String emailId) {
         this.id = id;
