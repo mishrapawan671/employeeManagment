@@ -1,6 +1,8 @@
 package com.emplyeemanagement.employeeManagment.controller;
 
+import com.emplyeemanagement.employeeManagment.DTO.EmployeeDTO;
 import com.emplyeemanagement.employeeManagment.Model.Employee;
+import com.emplyeemanagement.employeeManagment.Services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,23 +21,30 @@ import java.util.List;
 public class EmployeeController {
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private EmployeeService employeeService;
+
+    @Autowired
+    private  EmployeeRepository employeeRepository;
 
     //get All Employee List
     @GetMapping ("/employees")
-    public List<Employee> getAllEmployee()
+    public List<EmployeeDTO> getAllEmployee()
     {
-        return employeeRepository.findAll();
+        return employeeService.getAllEmployee();
+    }
+    @GetMapping ("/employeeInfo/{id}")
+    public Employee getAllEmployee(@PathVariable long id)
+    {
+        return employeeService.getDetails(id);
     }
 
     @GetMapping("/employees/{page}")
     public Page<Employee> getEmployeeByPage(@PathVariable int page)
     {
-//        List<Employee> list=employeeRepository.findAll(Pageable.ofSize(5).withPage(page))
-//                                                .stream()
-//                                                .toList();
+        return employeeService.getEmployeeByPage(page-1);
 
-        return employeeRepository.findAll(Pageable.ofSize(5).withPage(page));
+
+        //return employeeService.getEmployeeByPage(page);
 
 
     }
@@ -43,7 +52,7 @@ public class EmployeeController {
     @PostMapping(value = "/AddEmployee",consumes = "application/json")
         public ResponseEntity saveEmployee( @RequestBody Employee employee)
     {
-        if(employeeRepository.save(employee)!=null)
+        if(employeeService.save(employee)!=null)
         {
             return ResponseEntity.status(HttpStatus.ACCEPTED).header("Message","Employee Saved").build();
         }
